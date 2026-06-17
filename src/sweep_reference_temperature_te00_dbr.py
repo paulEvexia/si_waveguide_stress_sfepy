@@ -40,6 +40,7 @@ DEFAULT_SWEEP_STRESS_NX = 200
 DEFAULT_SWEEP_STRESS_NY = 140
 DEFAULT_POINT_PNG_DPI = 150
 DEFAULT_POINT_PNG_MAX_PIXELS = 500_000
+STRAIN_PNG_ABS_LIMIT = 3.0e-3
 DBR_SECTIONS = [
     {
         "section_name": "unperturbed",
@@ -319,6 +320,7 @@ def plot_array_png(
     path,
     cmap,
     symmetric=True,
+    fixed_abs_limit=None,
     dpi=DEFAULT_POINT_PNG_DPI,
     max_pixels=DEFAULT_POINT_PNG_MAX_PIXELS,
 ):
@@ -334,7 +336,12 @@ def plot_array_png(
     )
     color_limits = {}
 
-    if symmetric:
+    if fixed_abs_limit is not None:
+        fixed_abs_limit = float(fixed_abs_limit)
+        if fixed_abs_limit <= 0.0:
+            raise ValueError("fixed_abs_limit must be positive.")
+        color_limits = {"vmin": -fixed_abs_limit, "vmax": fixed_abs_limit}
+    elif symmetric:
         max_abs = np.nanmax(np.abs(values_plot))
         if np.isfinite(max_abs) and max_abs > 0.0:
             color_limits = {"vmin": -max_abs, "vmax": max_abs}
@@ -485,6 +492,7 @@ def save_mechanical_point_pngs(
             out_dir / f"strain_{args.strain_source}_{metric}.png",
             stress.RGB_DISTRIBUTION_CMAP,
             symmetric=True,
+            fixed_abs_limit=STRAIN_PNG_ABS_LIMIT,
             dpi=args.point_png_dpi,
             max_pixels=args.point_png_max_pixels,
         )

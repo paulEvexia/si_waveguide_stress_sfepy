@@ -36,6 +36,7 @@ RGB_DISTRIBUTION_CMAP = LinearSegmentedColormap.from_list(
     ["blue", "green", "red"],
 )
 RGB_MATERIAL_CMAP = ListedColormap(["blue", "red"])
+STRAIN_PNG_ABS_LIMIT = 3.0e-3
 
 # Geometry in micrometers.
 # Stack, bottom to top: Si handle, SiO2 BOX, Si rib/slab, conformal SiO2 cladding.
@@ -722,7 +723,10 @@ def plot_distribution_field(rows, metric, label, filename):
     color_scale = {}
     max_abs = np.nanmax(np.abs(values))
 
-    if max_abs > 0.0:
+    if metric.startswith("eps_"):
+        color_scale["vmin"] = -STRAIN_PNG_ABS_LIMIT
+        color_scale["vmax"] = STRAIN_PNG_ABS_LIMIT
+    elif max_abs > 0.0:
         color_scale["vmin"] = -max_abs
         color_scale["vmax"] = max_abs
 
