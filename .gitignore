@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Simulation outputs
+results/*
+!results/.gitkeep
+rslt/*
+!rslt/.gitkeep
+src/*.vtk
+
+# Local/editor files
+.vscode/
+.idea/
+*.log
